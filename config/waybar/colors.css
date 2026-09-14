@@ -1,0 +1,4 @@
+/* Paleta local — substitui o import do Omarchy (~/.config/omarchy/current/theme/waybar.css) */
+@define-color background  #151515;
+@define-color foreground  #e6e1cf;
+@define-color transparent rgba(0, 0, 0, 0);

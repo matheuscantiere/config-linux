@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Convert an image to Unicode braille art sized for a fetch-tool logo.
+
+Each braille glyph (U+2800..U+28FF) encodes a 2x4 dot grid, so the effective
+resolution is 8x higher than one character per pixel.
+
+Usage: img2logo IMAGE [WIDTH] [--invert] [--threshold N]
+  WIDTH        output width in terminal columns (default 30)
+  --invert     treat dark pixels as ink instead of bright ones
+  --threshold  luminance cutoff 0-255 (default: Otsu, computed per image)
+"""
+import sys
+from PIL import Image
+
+DOT_BITS = {
+    (0, 0): 0x01, (0, 1): 0x02, (0, 2): 0x04, (0, 3): 0x40,
+    (1, 0): 0x08, (1, 1): 0x10, (1, 2): 0x20, (1, 3): 0x80,
+}
+CELL_ASPECT = 0.5  # terminal cell is about twice as tall as it is wide
+
+
+def otsu(hist, total):
+    sum_all = sum(i * n for i, n in enumerate(hist))
+    sum_b = w_b = 0.0
+    best, cutoff = -1.0, 127
+    for t, n in enumerate(hist):
+        w_b += n
+        if w_b == 0:
+            continue
+        w_f = total - w_b
+        if w_f == 0:
+            break
+        sum_b += t * n
+        var = w_b * w_f * (sum_b / w_b - (sum_all - sum_b) / w_f) ** 2
+        if var > best:
+            best, cutoff = var, t
+    return cutoff
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    flags = [a for a in sys.argv[1:] if a.startswith("--")]
+    if not args:
+        sys.exit(__doc__)
+
+    path = args[0]
+    width = int(args[1]) if len(args) > 1 else 30
+    invert = "--invert" in flags
+    threshold = next((int(f.split("=")[1]) for f in flags
+                      if f.startswith("--threshold=")), None)
+
+    img = Image.open(path)
+    if img.mode in ("RGBA", "LA", "P"):
+        img = img.convert("RGBA")
+        flat = Image.new("RGBA", img.size, (0, 0, 0, 255))
+        flat.alpha_composite(img)
+        img = flat
+    img = img.convert("L")
+
+    rows = max(1, round(width * (img.height / img.width) * CELL_ASPECT))
+    img = img.resize((width * 2, rows * 4), Image.LANCZOS)
+
+    if threshold is None:
+        threshold = otsu(img.histogram(), img.width * img.height)
+
+    px = img.load()
+    lines = []
+    for row in range(rows):
+        line = ""
+        for col in range(width):
+            code = 0
+            for (dx, dy), bit in DOT_BITS.items():
+                lit = px[col * 2 + dx, row * 4 + dy] > threshold
+                if lit != invert:
+                    code |= bit
+            line += chr(0x2800 + code)
+        lines.append(line.rstrip() or " ")
+    print("\n".join(lines))
+
+
+if __name__ == "__main__":
+    main()

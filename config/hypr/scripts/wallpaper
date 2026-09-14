@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Wallpaper picker for Hyprland, backed by swaybg.
+#
+#   wallpaper            open the rofi thumbnail grid
+#   wallpaper NAME       apply a wallpaper already stored in the library
+#   wallpaper /path.png  import an image into the library, then apply it
+#   wallpaper --list     print the library contents
+#
+# The active image is kept at $ACTIVE so hyprland.conf can point at a fixed
+# path; the library keeps the originals so nothing is lost on a switch.
+
+set -euo pipefail
+
+LIB="$HOME/.config/hypr/wallpapers"
+ACTIVE="$HOME/.config/hypr/wallpaper.png"
+MODE="fill"
+
+mkdir -p "$LIB"
+
+apply() {
+  local img=$1
+  cp -f "$img" "$ACTIVE"
+  pkill -x swaybg 2>/dev/null || true
+  setsid -f swaybg -i "$ACTIVE" -m "$MODE" >/dev/null 2>&1
+  # Best effort: there may be no notification daemon running, and set -e must
+  # not turn that into a failed wallpaper switch.
+  command -v notify-send >/dev/null &&
+    notify-send -u low -i "$ACTIVE" "Wallpaper" "$(basename "$img")" 2>/dev/null || true
+}
+
+case ${1-} in
+  --list|-l)
+    find "$LIB" -maxdepth 1 -type f \
+      \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) \
+      -printf '%f\n' | sort
+    exit 0
+    ;;
+  '')
+    # The rofi icon protocol is LABEL \0 icon \x1f PATH. Those NUL bytes cannot
+    # survive a shell variable, so the list is piped straight into rofi.
+    entries() {
+      find "$LIB" -maxdepth 1 -type f \
+        \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) \
+        | sort \
+        | while read -r f; do
+            printf '%s\0icon\x1f%s\n' "$(basename "${f%.*}")" "$f"
+          done
+    }
+
+    if [ -z "$(entries)" ]; then
+      echo "Nenhuma imagem em $LIB" >&2
+      exit 1
+    fi
+
+    choice=$(entries | rofi -dmenu -i -p "Wallpaper" -show-icons \
+                            -theme "$HOME/.config/rofi/wallpaper.rasi") || exit 0
+    [ -z "$choice" ] && exit 0
+
+    img=$(find "$LIB" -maxdepth 1 -type f -name "$choice.*" | head -1)
+    [ -z "$img" ] && { echo "Nao achei '$choice' em $LIB" >&2; exit 1; }
+    apply "$img"
+    ;;
+  /*|./*|~/*)
+    src=${1/#\~/$HOME}
+    [ -f "$src" ] || { echo "Arquivo nao encontrado: $src" >&2; exit 1; }
+    cp -f "$src" "$LIB/$(basename "$src")"
+    apply "$LIB/$(basename "$src")"
+    ;;
+  *)
+    img=$(find "$LIB" -maxdepth 1 -type f -name "$1.*" | head -1)
+    [ -z "$img" ] && { echo "Nao achei '$1' em $LIB" >&2; "$0" --list >&2; exit 1; }
+    apply "$img"
+    ;;
+esac

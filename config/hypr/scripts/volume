@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Volume and microphone control for the Hyprland media keys.
+# Uses wpctl (WirePlumber), which is what PipeWire ships with on this system.
+
+set -euo pipefail
+
+SINK="@DEFAULT_AUDIO_SINK@"
+SOURCE="@DEFAULT_AUDIO_SOURCE@"
+STEP="5%"
+
+notify() {
+    command -v notify-send >/dev/null 2>&1 || return 0
+    notify-send -h string:x-canonical-private-synchronous:volume \
+                -h "int:value:$2" -t 1500 "$1" "${3:-}"
+}
+
+sink_volume() {
+    # "Volume: 0.45" or "Volume: 0.45 [MUTED]"
+    wpctl get-volume "$SINK" | awk '{printf "%d", $2 * 100}'
+}
+
+source_volume() {
+    wpctl get-volume "$SOURCE" | awk '{printf "%d", $2 * 100}'
+}
+
+case "${1:-}" in
+    --inc)
+        wpctl set-mute "$SINK" 0
+        wpctl set-volume -l 1.5 "$SINK" "${STEP}+"
+        notify "Volume" "$(sink_volume)" "$(sink_volume)%"
+        ;;
+    --dec)
+        wpctl set-mute "$SINK" 0
+        wpctl set-volume "$SINK" "${STEP}-"
+        notify "Volume" "$(sink_volume)" "$(sink_volume)%"
+        ;;
+    --toggle)
+        wpctl set-mute "$SINK" toggle
+        if wpctl get-volume "$SINK" | grep -q MUTED; then
+            notify "Volume" 0 "muted"
+        else
+            notify "Volume" "$(sink_volume)" "$(sink_volume)%"
+        fi
+        ;;
+    --toggle-mic)
+        wpctl set-mute "$SOURCE" toggle
+        if wpctl get-volume "$SOURCE" | grep -q MUTED; then
+            notify "Microphone" 0 "muted"
+        else
+            notify "Microphone" "$(source_volume)" "$(source_volume)%"
+        fi
+        ;;
+    --get)
+        sink_volume
+        ;;
+    *)
+        echo "usage: ${0##*/} --inc | --dec | --toggle | --toggle-mic | --get" >&2
+        exit 1
+        ;;
+esac

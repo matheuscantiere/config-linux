@@ -1,0 +1,95 @@
+/* Catppuccin Macchiato — matches the waybar and kitty themes */
+
+* {
+    base:     #24273a;
+    mantle:   #1e2030;
+    crust:    #181926;
+    surface0: #363a4f;
+    surface1: #494d64;
+    text:     #cad3f5;
+    subtext:  #b8c0e0;
+    overlay:  #6e738d;
+    blue:     #8aadf4;
+    mauve:    #c6a0f6;
+    red:      #ed8796;
+
+    background-color: transparent;
+    text-color:       @text;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    width:            640px;
+    border:           2px;
+    border-color:     @blue;
+    border-radius:    12px;
+    background-color: @base;
+}
+
+mainbox {
+    padding:  12px;
+    children: [ inputbar, message, listview ];
+    spacing:  10px;
+}
+
+inputbar {
+    background-color: @mantle;
+    border-radius:    8px;
+    padding:          10px 12px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @mauve;
+}
+
+entry {
+    placeholder:            "Search…";
+    placeholder-color:      @overlay;
+    cursor:                 text;
+}
+
+message {
+    background-color: @mantle;
+    border-radius:    8px;
+    padding:          8px;
+}
+
+listview {
+    lines:        10;
+    columns:      1;
+    scrollbar:    false;
+    fixed-height: false;
+    spacing:      4px;
+}
+
+element {
+    padding:       8px 10px;
+    border-radius: 8px;
+    spacing:       10px;
+}
+
+element normal normal   { text-color: @text; }
+element alternate normal { text-color: @text; }
+
+element selected normal,
+element selected active,
+element selected urgent {
+    background-color: @blue;
+    text-color:       @crust;
+}
+
+element urgent normal { text-color: @red; }
+element active normal { text-color: @mauve; }
+
+element-icon {
+    size:             1.2em;
+    vertical-align:   0.5;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
