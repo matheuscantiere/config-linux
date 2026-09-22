@@ -1,0 +1,89 @@
+/* Wallpaper picker — thumbnail grid. Kept separate from config.rasi so the
+   launcher theme stays untouched. Palette matches waybar's colors.css. */
+
+* {
+    bg:        #151515;
+    bg-alt:    #1f1f1f;
+    fg:        #e6e1cf;
+    fg-dim:    #8a8578;
+    accent:    #7aa2f7;
+    font:      "JetBrainsMono Nerd Font 11";
+
+    /* rofi's built-in theme paints widgets white unless these globals are set,
+       so the grid area stayed light even with @bg on the window. */
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    transparency:     "real";
+    background-color: @bg;
+    border:           2px;
+    border-color:     @bg-alt;
+    border-radius:    10px;
+    width:            60%;
+    padding:          20px;
+}
+
+mainbox {
+    children:         [ inputbar, listview ];
+    spacing:          18px;
+    background-color: transparent;
+}
+
+inputbar {
+    children:         [ prompt, entry ];
+    background-color: @bg-alt;
+    border-radius:    8px;
+    padding:          10px 14px;
+    spacing:          12px;
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "filtrar...";
+    placeholder-color: @fg-dim;
+}
+
+listview {
+    background-color: transparent;
+    columns:          4;
+    lines:            2;
+    spacing:          14px;
+    cycle:            true;
+    scrollbar:        false;
+}
+
+element {
+    orientation:      vertical;
+    padding:          8px;
+    spacing:          8px;
+    border-radius:    8px;
+    background-color: transparent;
+    text-color:       @fg-dim;
+}
+
+element selected {
+    background-color: @bg-alt;
+    text-color:       @fg;
+    border:           2px;
+    border-color:     @accent;
+}
+
+element-icon {
+    size:             150px;
+    horizontal-align: 0.5;
+    background-color: transparent;
+}
+
+element-text {
+    horizontal-align: 0.5;
+    background-color: transparent;
+    text-color:       inherit;
+}

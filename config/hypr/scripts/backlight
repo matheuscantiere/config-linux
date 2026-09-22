@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Screen brightness for the Hyprland media keys.
+# Prefers brightnessctl; falls back to writing /sys directly when it is absent.
+
+set -euo pipefail
+
+DEVICE="intel_backlight"
+STEP=5
+
+notify() {
+    command -v notify-send >/dev/null 2>&1 || return 0
+    notify-send -h string:x-canonical-private-synchronous:backlight \
+                -h "int:value:$1" -t 1500 "Brightness" "$1%"
+}
+
+sysfs_percent() {
+    local cur max
+    cur=$(< "/sys/class/backlight/$DEVICE/brightness")
+    max=$(< "/sys/class/backlight/$DEVICE/max_brightness")
+    echo $(( cur * 100 / max ))
+}
+
+sysfs_set() {
+    local pct=$1 max
+    (( pct < 1 ))   && pct=1
+    (( pct > 100 )) && pct=100
+    max=$(< "/sys/class/backlight/$DEVICE/max_brightness")
+    echo $(( pct * max / 100 )) > "/sys/class/backlight/$DEVICE/brightness"
+}
+
+if command -v brightnessctl >/dev/null 2>&1; then
+    case "${1:-}" in
+        --inc) brightnessctl -q set "${STEP}%+" ;;
+        --dec) brightnessctl -q set "${STEP}%-" ;;
+        --get) brightnessctl -m | cut -d, -f4 | tr -d '%'; exit 0 ;;
+        *)     echo "usage: ${0##*/} --inc | --dec | --get" >&2; exit 1 ;;
+    esac
+    notify "$(brightnessctl -m | cut -d, -f4 | tr -d '%')"
+    exit 0
+fi
+
+[ -e "/sys/class/backlight/$DEVICE/brightness" ] || exit 0
+
+case "${1:-}" in
+    --inc) sysfs_set $(( $(sysfs_percent) + STEP )) ;;
+    --dec) sysfs_set $(( $(sysfs_percent) - STEP )) ;;
+    --get) sysfs_percent; exit 0 ;;
+    *)     echo "usage: ${0##*/} --inc | --dec | --get" >&2; exit 1 ;;
+esac
+notify "$(sysfs_percent)"

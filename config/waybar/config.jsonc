@@ -1,0 +1,198 @@
+{
+  "exclusive": true,
+  "reload_style_on_change": true,
+  "position": "top",
+  "margin-top": 0,
+  "spacing": 0,
+  "height": 0,
+  "margin-bottom": 0,
+
+  "modules-left": [
+    "hyprland/workspaces",
+    "tray",
+    "custom/mackeys",
+    "custom/updates"
+  ],
+
+  "modules-center": ["group/island"],
+
+  "modules-right": [
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "memory",
+    "cpu",
+    "power-profiles-daemon",
+    "battery"
+  ],
+
+  "hyprland/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": true,
+    "cursor": true,
+    "format": "{icon}",
+    "persistent-workspaces": {
+      "1": [], "2": [], "3": [], "4": [], "5": [],
+      "6": [], "7": [], "8": [], "9": [], "10": []
+    }
+  },
+
+  "group/island": {
+    "orientation": "horizontal",
+    "modules": [
+      "custom/eq1", "custom/eq2", "custom/eq3", "custom/eq4", "custom/eq5",
+      "custom/island", "custom/art"
+    ]
+  },
+
+  "custom/eq1": {
+    "exec": "tail -n0 -F ${XDG_RUNTIME_DIR}/waybar-eq/1 2>/dev/null",
+    "return-type": "json",
+    "escape": false,
+    "on-click": "playerctl --player=spotify play-pause"
+  },
+
+  "custom/eq2": {
+    "exec": "tail -n0 -F ${XDG_RUNTIME_DIR}/waybar-eq/2 2>/dev/null",
+    "return-type": "json",
+    "escape": false,
+    "on-click": "playerctl --player=spotify play-pause"
+  },
+
+  "custom/eq3": {
+    "exec": "tail -n0 -F ${XDG_RUNTIME_DIR}/waybar-eq/3 2>/dev/null",
+    "return-type": "json",
+    "escape": false,
+    "on-click": "playerctl --player=spotify play-pause"
+  },
+
+  "custom/eq4": {
+    "exec": "tail -n0 -F ${XDG_RUNTIME_DIR}/waybar-eq/4 2>/dev/null",
+    "return-type": "json",
+    "escape": false,
+    "on-click": "playerctl --player=spotify play-pause"
+  },
+
+  "custom/eq5": {
+    "exec": "tail -n0 -F ${XDG_RUNTIME_DIR}/waybar-eq/5 2>/dev/null",
+    "return-type": "json",
+    "escape": false,
+    "on-click": "playerctl --player=spotify play-pause"
+  },
+
+  "custom/art": {
+    "exec": "~/.config/waybar/scripts/art.sh",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "hyprctl dispatch focuswindow class:Spotify"
+  },
+
+  "custom/island": {
+    "exec": "~/.config/waybar/scripts/island.sh",
+    "return-type": "json",
+    "interval": 1,
+    "tooltip": true,
+    "on-click": "playerctl --player=spotify play-pause",
+    "on-click-right": "hyprctl dispatch focuswindow class:Spotify",
+    "on-scroll-up": "playerctl --player=spotify next",
+    "on-scroll-down": "playerctl --player=spotify previous"
+  },
+
+  "custom/updates": {
+    "format": "󰏖 {}",
+    "return-type": "json",
+    "exec": "~/.config/waybar/scripts/apt-updates.sh",
+    "on-click": "kitty -e sh -c 'sudo apt update && sudo apt upgrade'",
+    "interval": 3600
+  },
+
+  "custom/mackeys": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "~/.config/waybar/scripts/mackeys.sh status",
+    "on-click": "~/.config/waybar/scripts/mackeys.sh toggle",
+    "signal": 8,
+    "interval": "once"
+  },
+
+  "tray": {
+    "icon-size": 14,
+    "spacing": 6
+  },
+
+  "bluetooth": {
+    "format": "󰂲",
+    "format-on": "󰂯",
+    "format-off": "󰂲",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱 {num_connections}",
+    "tooltip-format": "Bluetooth: {status}\nConectados: {num_connections}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "on-click": "blueman-manager",
+    "on-click-right": "blueman-adapters"
+  },
+
+  "network": {
+    "format-wifi": "{icon} {signalStrength}%",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰤮",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Desconectado",
+    "interval": 5,
+    "on-click": "kitty -e nmtui"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁",
+    "format-icons": {
+      "headphone": "󰋋",
+      "headset": "󰋎",
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer -t",
+    "tooltip-format": "{desc} — {volume}%",
+    "states": { "warning": 80, "critical": 100 }
+  },
+
+  "memory": {
+    "interval": 5,
+    "format": "󰍛 {percentage}%",
+    "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G",
+    "on-click": "kitty -e btop",
+    "states": { "warning": 70, "critical": 90 }
+  },
+
+  "cpu": {
+    "interval": 5,
+    "format": "󰻠 {usage}%",
+    "on-click": "kitty -e btop",
+    "states": { "warning": 70, "critical": 90 }
+  },
+
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Perfil: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "performance": "󰓅",
+      "balanced": "󰾅",
+      "power-saver": "󰌪"
+    }
+  },
+
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰁹 100%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip-format": "{timeTo} ({power}W)\nSaúde: {health}%",
+    "interval": 30
+  }
+}

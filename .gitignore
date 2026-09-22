@@ -1,0 +1,15 @@
+# backups produced by editors / scripts
+*.bak
+*.bak-*
+*.bak.*
+*.orig
+*~
+
+# machine-local state
+config/fish/fish_variables
+config/**/session.gvariant
+config/uv/uv-receipt.json
+
+# credentials
+.git-credentials
+.claude.json

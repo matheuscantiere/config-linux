@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Keyboard backlight control.
+# This machine exposes no *kbd_backlight LED under /sys/class/leds, so the
+# script exits quietly instead of failing. It starts working if such a
+# device ever appears (for example on a different keyboard).
+
+set -euo pipefail
+
+STEP=1
+
+device=$(ls -d /sys/class/leds/*kbd_backlight 2>/dev/null | head -1 || true)
+[ -n "$device" ] || exit 0
+
+cur=$(< "$device/brightness")
+max=$(< "$device/max_brightness")
+
+case "${1:-}" in
+    --inc) new=$(( cur + STEP )) ;;
+    --dec) new=$(( cur - STEP )) ;;
+    --get) echo "$cur"; exit 0 ;;
+    *)     echo "usage: ${0##*/} --inc | --dec | --get" >&2; exit 1 ;;
+esac
+
+(( new < 0 ))    && new=0
+(( new > max ))  && new=$max
+
+if command -v brightnessctl >/dev/null 2>&1; then
+    brightnessctl -q -d "${device##*/}" set "$new"
+else
+    echo "$new" > "$device/brightness"
+fi

@@ -1,0 +1,460 @@
+@import "colors.css";
+@import "art.css";
+@define-color bg @background;
+@define-color fg @foreground;
+
+* {
+  /* background-color: @background; */
+  /* color: @foreground; */
+
+  border: none;
+  padding: 0px;
+  font-family: "JetBrains Mono Nerd Font";
+  transition: background-color .3s ease-out;
+  font-weight: bold;
+  font-size: 14.4px;
+}
+
+window#waybar  {
+  background-color: transparent;
+}
+
+#waybar > box {
+  border-radius: 0px;
+  border-bottom: 1.8px solid rgba(255, 255, 255, 0.1);
+  margin: 0px 0px 2.4px 0px;
+  background-color: @background;
+  box-shadow: 0 1.2px 2.4px rgba(0, 0, 0, 1);
+  min-height: 30px;
+  transition-property: background-color;
+  transition-duration: .5s;
+}
+
+.modules-left {
+margin-left: 4.8px;
+}
+
+.modules-right {
+  margin-right: 4.8px;
+}
+
+#workspaces {
+    margin: 0px 0px;
+    transition: 0.1s ease-in-out;
+    padding: 0px 0px;
+}
+
+#workspaces button {
+  all: initial;
+  padding: 0px 4.8px;
+  margin: 4.8px 2.4px;
+  min-width: 12px;
+  color: @foreground;
+  opacity: 1;
+  font-weight: 900;
+}
+
+#workspaces button.active {
+  color: @background;
+  background-color: #df6124;
+  padding: 0px 4.8px;
+  margin: 4.8px 2.4px;
+  opacity: 1.0;
+
+}
+
+#workspaces button.empty:hover, 
+#workspaces button:hover {
+    background: transparent;
+    color: alpha(@foreground, 1);
+    transition: all 150ms ease;
+    opacity: 0.75;
+}
+
+#workspaces button.empty {
+  opacity: 0.4;
+  padding: 0px 4.8px;
+  margin: 4.8px 2.4px;
+  color: alpha(@foreground, 0.45);
+}
+
+#workspaces button.empty.active {
+  opacity: 1;
+  background-color: @foreground;
+  color: @background;
+}
+
+/* ---- equalizador: 5 barras brancas, canto totalmente redondo ---- */
+/* A altura vem da classe (h0..h7) que o eq-driver.sh manda a 20 fps.
+   Quem interpola entre um nivel e outro e a transicao do GTK, entao o
+   movimento sai mais fluido do que a taxa de quadros dos dados. */
+
+#custom-eq1,
+#custom-eq2,
+#custom-eq3,
+#custom-eq4,
+#custom-eq5 {
+  background-color: #ffffff;
+  border-radius: 999px;
+  min-width: 4px;
+  min-height: 0;
+  padding: 0;
+  font-size: 0px;   /* o rotulo e um espaco: sem isso a fonte dita a altura */
+  margin-left: 1.5px;
+  margin-right: 1.5px;
+  transition-property: min-height, margin-top, margin-bottom, opacity;
+  transition-duration: 110ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+#custom-eq1 { margin-left: 4px; }
+#custom-eq5 { margin-right: 10px; }
+
+#custom-eq1.h0,
+#custom-eq2.h0,
+#custom-eq3.h0,
+#custom-eq4.h0,
+#custom-eq5.h0 {
+  min-height: 4px;
+  margin-top: 11px;
+  margin-bottom: 11px;
+}
+
+#custom-eq1.h1,
+#custom-eq2.h1,
+#custom-eq3.h1,
+#custom-eq4.h1,
+#custom-eq5.h1 {
+  min-height: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#custom-eq1.h2,
+#custom-eq2.h2,
+#custom-eq3.h2,
+#custom-eq4.h2,
+#custom-eq5.h2 {
+  min-height: 8px;
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+
+#custom-eq1.h3,
+#custom-eq2.h3,
+#custom-eq3.h3,
+#custom-eq4.h3,
+#custom-eq5.h3 {
+  min-height: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+#custom-eq1.h4,
+#custom-eq2.h4,
+#custom-eq3.h4,
+#custom-eq4.h4,
+#custom-eq5.h4 {
+  min-height: 12px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+#custom-eq1.h5,
+#custom-eq2.h5,
+#custom-eq3.h5,
+#custom-eq4.h5,
+#custom-eq5.h5 {
+  min-height: 14px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+#custom-eq1.h6,
+#custom-eq2.h6,
+#custom-eq3.h6,
+#custom-eq4.h6,
+#custom-eq5.h6 {
+  min-height: 16px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#custom-eq1.h7,
+#custom-eq2.h7,
+#custom-eq3.h7,
+#custom-eq4.h7,
+#custom-eq5.h7 {
+  min-height: 18px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* ---- fim equalizador ---- */
+
+/* capa do album circular, com anel de progresso desenhado na propria imagem */
+
+#custom-art {
+  min-width: 28px;
+  min-height: 28px;
+  margin: 1px 4px 1px 2px;
+  padding: 0;
+  border: none;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition-property: min-width, margin, opacity;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+#custom-art.off {
+  min-width: 0;
+  margin: 0;
+  opacity: 0;
+  background-image: none;
+}
+
+/* ---- dynamic island ---- */
+
+/* a pilula agora e o grupo; o modulo de texto fica transparente dentro dela */
+#island {
+  background-color: #000000;
+  border: none;
+  border-radius: 999px;
+  padding: 0 6px 0 4px;
+  margin: 3px 0;
+  transition-property: padding, background-color;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+#island:hover {
+  background-color: #1c1c1c;
+}
+
+#custom-island {
+  background-color: transparent;
+  color: @foreground;
+  border: none;
+  padding: 0 12px;
+  margin: 0;
+  min-width: 90px;
+  opacity: 1;
+  letter-spacing: 0.3px;
+  transition-property: padding, min-width, background-color, color;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+#custom-island.idle {
+  padding: 0 14px;
+  min-width: 90px;
+}
+
+#custom-island.playing {
+  padding: 0 14px;
+  min-width: 150px;
+}
+
+#custom-island.paused {
+  padding: 0 14px;
+  min-width: 150px;
+  color: alpha(@foreground, 0.7);
+}
+
+/* ---- fim dynamic island ---- */
+
+
+#memory,
+#mpris,
+#custom-expand-icon,
+#tray,
+#cpu,
+#battery,
+#backlight,
+#network,
+#bluetooth,
+#pulseaudio,
+#power-profiles-daemon,
+#power-profiles-daemon.performance,
+#power-profiles-daemon.balanced,
+#power-profiles-daemon.power-saver,
+#custom-omarchy,
+#custom-mackeys,
+#custom-idle-indicator,
+#custom-notification-silencing-indicator,
+#custom-updatespacman,
+#custom-screenrecording-indicator,
+#custom-update {
+  min-width: 14.4px;
+  padding: 0 7.2px;
+  margin: 1.2px 1.2px;
+  opacity: 0.85;
+}
+
+#custom-update {
+opacity: 1;
+}
+	
+
+#custom-updatespacman {
+opacity: 1;
+}
+
+#tray {
+opacity: 1;
+padding-top: 2.4px;
+}
+
+#custom-mackeys.off {
+opacity: 0.5;
+}
+
+
+#custom-mackeys.on {
+opacity: 1;
+}
+
+#bluetooth,
+#network,
+#pulseaudio,
+#memory,
+#cpu,
+#power-profiles-daemon,
+#battery {
+  font-size: 13.5px;
+}
+
+#bluetooth.connected {
+  color: #df6124;
+  opacity: 1;
+}
+
+#pulseaudio.muted,
+#network.disconnected {
+  opacity: 0.45;
+}
+
+#custom-idle-indicator,
+#custom-notification-silencing-indicator {
+  min-width: 14.4px;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 14.4px;
+  padding-bottom: 0px;
+}
+
+#custom-idle-indicator.active,
+#custom-notification-silencing-indicator.active {
+  color: #a55555;
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+tooltip {
+  padding: 12px 14px;
+  background: @background;
+  font-size: 12px;
+  border: 1px solid alpha(@foreground, 0.18);
+  border-radius: 10px;
+}
+
+tooltip label {
+  color: alpha(@foreground, 0.92);
+  font-weight: normal;
+}
+
+#custom-voxtype {
+  min-width: 14.4px;
+  margin: 0 0 0 3px;
+}
+
+#custom-voxtype.recording {
+  color: #a55555;
+}
+
+/* Specific animation Module */
+
+
+#custom-screenrecording-indicator {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  color: transparent;
+}
+
+#custom-screenrecording-indicator.active {
+  color: #eb7087;
+  animation-name: blink-recording;
+  animation-duration: 0.5s;
+}
+
+@keyframes blink-recording {
+    to {
+        color: @background;
+    }
+}
+
+@keyframes blink-inhibitor {
+    to {
+        color: @background;
+    }
+}
+
+#mpris {
+opacity: 1;
+color: @foreground;
+animation: repeat;
+	animation-name: blink;
+	animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        color: #4a4a4a;
+        
+    }
+}
+
+#battery.warning {
+  color: #c95d0f;
+}
+
+@keyframes blink2 {
+  to {
+    background-color: transparent;
+    color: #f53c3c;
+  }
+}
+
+#battery.critical:not(.charging) {
+  background-color: transparent;
+  color: #e6d8ba;
+  animation-name: blink2;
+  animation-duration: 0.5s;
+  animation-timing-function: steps(12);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#pulseaudio.warning,
+#memory.warning,
+#cpu.warning {
+    color: #e3c1b1; /* medium load */
+    background-color: @background;
+}
+
+#pulseaudio.critical,
+#memory.critical,
+#cpu.critical {
+    color: #df6124; /* high load */
+    background-color: @background;
+}
