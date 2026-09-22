@@ -10,6 +10,9 @@
 
 {
    "$schema": "https://vicinae.com/schemas/config.json",
+   "tray": {
+      "enabled": false
+   },
    "theme": {
       "dark": {
          "name": "zenwritten-dark"
@@ -17,6 +20,9 @@
    },
    "providers": {
       "clipboard": {
+         "preferences": {
+            "monitoring": true
+         },
          "entrypoints": {
             "history": {
                "enabled": true
